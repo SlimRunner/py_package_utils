@@ -1,6 +1,21 @@
 # itermv
 **itermv** is a command-line utility designed to simplify the renaming of multiple files in a directory. It provides flexible pattern matching using regular expressions (regex) and allows for advanced renaming options with capture groups. Additionally, `itermv` supports automatic name collision avoidance, making batch file renaming smooth and error-free.
 
+## Log
+There are some bugs.
+
+The first is that if you create a chain of renaming that starts in a file that exists but the next item uses a file that does not exist then the renaming fails. For example, assume the only file in the cwd is `X` then
+```
+X -> Y
+Y -> Z
+Z -> X
+```
+which does absolutely nothing or if the last `X` was something else like `A` then the whole chain is equivalent to `X -> A`. The problem this brings up is that using a file with accumulated changes from this program itself, then temporary names may create a chain that runs into this problem. **The quick solution is to make it so that the `--verbose-export` flag prints the names prior to them being processed by the scheduler** (since this type of chain clearly requires the `--overlap` flag as well).
+
+However, there is an extra problem; namely, these types of chains collide with the definition of solving overlapping file renaming. For example, look at the example, just above. What should happen if `Y` does exist in the cwd? **Is it safe to simply "sqash" the names that do not exist?** Z in this case. Furthermore, this invites the idea of non unique sets of either source names or target names. This violates the guarantee under which my current scheduling argorithm works. It would seem that this reducing algoirhtm would have to happen prior during the preparation of arguments. What is for sure is that my `FileEntry` would no longer be able to guarantee that its datamember represents a file that exists. The solution would be either a middle man approach, or allow dirty states in the `FileEntry` class.
+
+This certainly complicates things. Is it worth it?
+
 ## Features
 - **Flexible Renaming Methods**:
   - Use patterns with placeholders (`{name}`, `{ext}`, `{n}`, etc.) for dynamic renaming.
