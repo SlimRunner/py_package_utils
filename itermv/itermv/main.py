@@ -25,8 +25,11 @@ def main():
         else:
             schedule = createValidTasklist(included)
 
+        strSelected = (
+            [(a.name, b.name) for a, b in included] if args.verbose_export else schedule
+        )
         strIgnored = [(a.name, b.name) for a, b in ignored]
-        printSchedule(schedule, strIgnored, args)
+        printSchedule(strSelected, strIgnored, args)
 
         if args.dry_run and askUser("Dummy prompt", args):
             success = True
