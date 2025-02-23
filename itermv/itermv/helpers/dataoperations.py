@@ -44,7 +44,7 @@ def printSchedule(
     schedule = [(os.path.basename(a), os.path.basename(b)) for a, b in schedule]
     ignored = [(os.path.basename(a), os.path.basename(b)) for a, b in ignored]
     if args.verbose or args.verbose_summary:
-        rowLimit = 10 if args.verbose_summary else 0
+        rowLimit = 4 if args.verbose_summary else 0
         print(f"Common directory is: {args.source_dir.path}\n")
         if ignored:
             print("These files will be ignored:")
@@ -70,7 +70,7 @@ def getRows(items: list[tuple[str, str]], rowLimit=0):
         lines.append(f"{a:{colSize[0]}} -> {b:{colSize[1]}}")
 
     if rowLimit > 0 and rowLimit < len(lines) // 2:
-        lines = lines[:rowLimit] + lines[-rowLimit:]
+        lines = lines[:rowLimit] + ["..."] + lines[-rowLimit:]
 
     return lines
 
